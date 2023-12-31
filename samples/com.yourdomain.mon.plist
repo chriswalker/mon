@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>Label</key>
+		<string>com.yourdomain.mon</string>
+		<key>ProgramArguments</key>
+		<array>
+			<string>/path/to/mon</string>
+			<string>-notify</string>
+			<string>--services-file</string>
+			<string>/path/to/services.json</string>
+		</array>
+	    <key>StartInterval</key>
+	    <!-- 5 minutes; set to interval required -->
+        <integer>300</integer>
+		<key>StandardOutPath</key>
+		<string>/tmp/com.yourdomain.mon.out</string>
+		<key>StandardErrorPath</key>
+		<string>/tmp/com.yourdomain.mon.out</string>
+	</dict>
+</plist>
