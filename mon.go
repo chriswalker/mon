@@ -43,7 +43,7 @@ func main() {
 	type service struct {
 		Name    string            `json:"name"`
 		URL     string            `json:"url"`
-		Headers map[string]string `json:",omitempty"`
+		Headers map[string]string `json:"headers,omitempty"`
 		Status  int               `json:"status"`
 	}
 
