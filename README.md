@@ -14,9 +14,9 @@ go install github.com/chriswalker/mon
 ```
 
 ## Configuration
-Services to monitor are defined in a simple JSON file, provided to the program with the `--services-file` or `-s` flags.
+Services to monitor are defined in a simple JSON file, by default located at `~/Library/Application Support/mon/services.json` under MacOS. This can be overridden with the `--services-file` or `-s` flags.
 
-The file is an array of objects, each of which must minimally define a `name` and `url`. HTTP headers can be specified in the `headers` property.
+The file is an array of objects, each of which must minimally define a `name` and `url`. HTTP headers can be optionally specified in the `headers` property.
 
 A sample services file might look like:
 
@@ -40,7 +40,7 @@ If a headers map is provided for a service, the specified headers are provided a
 ## Command-line Flags
 | Flag | Description |
 | --- | --- |
-| `-s`, `--services-file` | Path to the services configuration file (defaults to `./services.json`) |
+| `-s`, `--services-file` | Path to the services configuration file (defaults to `~/Library/Application Support/mon/services.json` on MacOS) |
 | `-j`, `--json` | Output status information as JSON (if omitted, defaults to tubular status output) |
 | `--notify` | Display a desktop notification for each service that does **not** return a success (`200 OK`) status |
 
