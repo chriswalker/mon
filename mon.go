@@ -1,3 +1,33 @@
+/*
+mon is a simple service monitor.
+
+It pings HTTP services specified in a JSON configuration file. Services
+returning a 200 (OK) status code are deemed to be up. Non-200 status codes
+result in an error status.
+
+By default, mon reads its configuration file from:
+
+  [config_dir]/mon/services.json
+
+where [config_dir] is whatever os.UserConfigDir() returns. This
+can be overriden with the -s/-services-file flags.
+
+mon can output status results in tabular format (the default), as JSON
+or as a MacOS notification for 'failing' services.
+
+Usage:
+
+  mon [flags]
+
+The flags are:
+
+  -s,-services-file
+      Full path including filename to the configuration file
+  -j,-json
+      Output results in JSON format
+  -notify
+      Display a MacOS notification for failing services via osascript
+*/
 package main
 
 import (
@@ -7,6 +37,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"sync"
 	"text/tabwriter"
 	"time"
@@ -21,8 +52,8 @@ func main() {
 		notify bool
 	)
 
-	flag.StringVar(&file, "s", "./services.json", "path to services file")
-	flag.StringVar(&file, "services-file", "./services.json", "path to services file")
+	flag.StringVar(&file, "s", "", "full path to services file")
+	flag.StringVar(&file, "services-file", "", "full path to services file")
 	flag.BoolVar(&asJson, "j", false, "whether to display output as JSON")
 	flag.BoolVar(&asJson, "json", false, "whether to display output as JSON")
 	flag.BoolVar(&notify, "notify", false, "whether to display service issues as notifications")
@@ -30,6 +61,15 @@ func main() {
 
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
+	if file == "" {
+		dir, err := getConfigDir()
+		if err != nil {
+			logger.Error("unable to obtain config directory",
+				"error", err)
+			os.Exit(1)
+		}
+		file = filepath.Join(dir, "services.json")
+	}
 	data, err := os.ReadFile(file)
 	if err != nil {
 		logger.Error("unable to open services file",
@@ -123,4 +163,19 @@ func main() {
 		}
 		w.Flush()
 	}
+}
+
+// getConfigDir checks if the mon config directory exists, and
+// creates if it not. It returns the full path to the config directory.
+func getConfigDir() (string, error) {
+	dir, err := os.UserConfigDir()
+	if err != nil {
+		return "", err
+	}
+	configDir := filepath.Join(dir, "mon")
+	err = os.Mkdir(configDir, 0700)
+	if err != nil && !os.IsExist(err) {
+		return "", err
+	}
+	return configDir, nil
 }
