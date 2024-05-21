@@ -59,7 +59,7 @@ func main() {
 	flag.BoolVar(&notify, "notify", false, "whether to display service issues as notifications")
 	flag.Parse()
 
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger := slog.New(slog.NewJSONHandler(os.Stderr, nil))
 
 	if file == "" {
 		dir, err := getConfigDir()
